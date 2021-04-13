@@ -38,7 +38,6 @@ phases:
       - cd $CODEBUILD_SRC_DIR/my-app
       - npm install -g sonarqube-scanner
       - npm install @angular/cli
-      - npm verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
       - echo "-- $SONAR_TOKEN --- $SONAR_PROJ --- $SONAR_ORG ---- SONAR_HOST - $HOST, Token - $LOGIN, ProjectKey - $Project, Org - $Organization"
       - sonar-scanner -Dsonar.login=$LOGIN -Dsonar.host.url=$HOST -Dsonar.projectKey=$Project -Dsonar.organization=$Organization
       - sleep 5
