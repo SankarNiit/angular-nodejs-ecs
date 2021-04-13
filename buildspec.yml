@@ -32,7 +32,6 @@ phases:
       - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 913536217213.dkr.ecr.eu-west-2.amazonaws.com
       - echo Entering pre_build phase...
       - ./jfrog rt config --url $ARTIFACTORY_URL --user $ARTIFACTORY_USER --apikey $ARTIFACTORY_API_KEY
-      - sed -i -e 's|ARTIFACTORY_USER|${ARTIFACTORY_USER}|g' settings.xml && sed -i -e 's|ARTIFACTORY_PASSWORD|${ARTIFACTORY_API_KEY}|g' settings.xml && sed -i -e 's|ARTIFACTORY_MVN_REPO|${ARTIFACTORY_MVN_REPO}|g' settings.xml
   build:
     commands:
       - echo Build started on `date`
@@ -48,25 +47,25 @@ phases:
       - ls target
       - pwd
       - ls
-      - cp target/helloworld-1.1.jar HelloWorld.jar
-      - docker build -t hello-world .
+      #- cp target/nodejs-app-1.1 nodeJS
+      - docker build -t nodejs-app .
       
   post_build:
     commands:
      - aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 913536217213.dkr.ecr.eu-west-2.amazonaws.com
      - IMAGE_TAG="test-1.0.0"
-     - REPOSITORY_URI=913536217213.dkr.ecr.eu-west-2.amazonaws.com/docker-hello-world
-     - docker tag hello-world:latest 913536217213.dkr.ecr.eu-west-2.amazonaws.com/docker-hello-world:$IMAGE_TAG
-     - docker push 913536217213.dkr.ecr.eu-west-2.amazonaws.com/docker-hello-world:$IMAGE_TAG
+     - REPOSITORY_URI=913536217213.dkr.ecr.eu-west-2.amazonaws.com/docker-nodejs-app
+     - docker tag nodejs-app:latest 913536217213.dkr.ecr.eu-west-2.amazonaws.com/docker-nodejs-app:$IMAGE_TAG
+     - docker push 913536217213.dkr.ecr.eu-west-2.amazonaws.com/docker-nodejs-app:$IMAGE_TAG
      - echo $CODEBUILD_SRC_DIR
      - cd $CODEBUILD_SRC_DIR/target
-     - printf '[{"name":"hello-world","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+     - printf '[{"name":"nodejs-app","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
      - ls
      - cat imagedefinitions.json
      - curl -H "X-JFrog-Art-Api:$ARTIFACTORY_API_KEY" -T *.json "https://awspoc27.jfrog.io/artifactory/example-repo-local/"
      - curl -H "X-JFrog-Art-Api:$ARTIFACTORY_API_KEY" -T *.jar "https://awspoc27.jfrog.io/artifactory/example-repo-local/"
 artifacts:
   files:
-  - target/helloworld-1.1.jar
+  #- target/nodejs-app-1.1
   - target/imagedefinitions.json
   - result.json
