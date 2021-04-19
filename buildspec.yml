@@ -40,6 +40,7 @@ phases:
       - ls
       #- cp target/nodejs-app-1.1 nodeJS
       - docker build -t nodejs-app .
+      - ls
       
   post_build:
     commands:
@@ -49,7 +50,8 @@ phases:
      - docker tag nodejs-app:latest 913536217213.dkr.ecr.eu-west-2.amazonaws.com/docker-nodejs-app:$IMAGE_TAG
      - docker push 913536217213.dkr.ecr.eu-west-2.amazonaws.com/docker-nodejs-app:$IMAGE_TAG
      - echo $CODEBUILD_SRC_DIR
-     - cd $CODEBUILD_SRC_DIR/target
+     - ls
+     - cd $CODEBUILD_SRC_DIR
      - printf '[{"name":"nodejs-app","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
      - ls
      - cat imagedefinitions.json
@@ -58,5 +60,5 @@ phases:
 artifacts:
   files:
   #- target/nodejs-app-1.1
-  - target/imagedefinitions.json
+  - imagedefinitions.json
   - result.json
